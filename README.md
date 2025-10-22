@@ -62,9 +62,10 @@ dotnet run --project AvaliaFilmesAPI.Web
 
 A API estará em execução em https://localhost:7192.
 
-📄 Documentação (Swagger UI)Após executar a API, a documentação interativa e navegável do Swagger estará disponível
+### 4 📄 Documentação (Swagger UI)
+Após executar a API, a documentação interativa e navegável do Swagger estará disponível
 :URL: https://localhost:7192/swagger/index.html
 
-✅ Executando Testes
-Para executar toda a suíte de testes unitários e de integração definidos na camada AvaliaFilmesAPI.Tests:
+### 5 ✅ Executando Testes
+Para executar toda a suíte de testes unitários definidos na camada AvaliaFilmesAPI.Tests:
 dotnet test
