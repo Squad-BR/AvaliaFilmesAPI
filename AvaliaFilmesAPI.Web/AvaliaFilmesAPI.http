@@ -1,0 +1,6 @@
+@AvaliaFilmesAPI_HostAddress = http://localhost:5208
+
+GET {{AvaliaFilmesAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
