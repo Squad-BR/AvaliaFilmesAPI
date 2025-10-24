@@ -12,5 +12,10 @@ namespace AvaliaFilmesAPI.Web.ViewModels
 
         [Required(ErrorMessage = "A senha é obrigatória")]
         public string Password { get; set; }
+
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirmar Senha")]
+        [Compare("Password", ErrorMessage = "As senhas não coincidem.")]
+        public string ConfirmPassword { get; set; }
     }
 }
