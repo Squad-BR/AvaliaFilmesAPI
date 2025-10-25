@@ -1,6 +1,7 @@
 ﻿using AvaliaFilmesAPI.Business.Service.Interface;
 using AvaliaFilmesAPI.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using static AvaliaFilmesAPI.Business.Service.Validation;
 
 namespace AvaliaFilmesAPI.Web.Controllers
 {
@@ -15,26 +16,35 @@ namespace AvaliaFilmesAPI.Web.Controllers
             _filmeService = filmeService;
         }
 
-        [HttpGet]
+        [HttpGet("todos-filmes")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetAll()
         {
             var filmes = await _filmeService.ObterTodosAsync();
             return Ok(filmes);
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("filme/{id}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetById(Guid id)
         {
-            var filme = await _filmeService.ObterPorIdAsync(id);
-            if (filme == null)
+
+            try
             {
-                return NotFound($"ID: {id} não encontrado!.");
+                var filme = await _filmeService.ObterPorIdAsync(id);
+                return Ok(filme);
+            }
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
             }
 
-            return Ok(filme);
         }
 
-        [HttpPost]
+        [HttpPost("adicionar-filme")]
+        [ProducesResponseType(typeof(Filme), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] Filme filme)
         {
             if (!ModelState.IsValid)
@@ -45,33 +55,48 @@ namespace AvaliaFilmesAPI.Web.Controllers
             return CreatedAtAction(nameof(GetById), new { id = filme.Id }, filme);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("editar-filme/{id}")]
+        [ProducesResponseType(typeof(Filme), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Update(Guid id, [FromBody] Filme filme)
         {
-            if (!ModelState.IsValid)
+
+            try
             {
-                return BadRequest(ModelState);
+                await _filmeService.AtualizarAsync(filme);
+                return NoContent();
             }
-            var filmeExistente = await _filmeService.ObterPorIdAsync(id);
-            if (filmeExistente == null)
+            catch (NotFoundException ex)
             {
-                return NotFound($"ID: {id} não encontrado!.");
+                return NotFound(new { message = ex.Message });
             }
-            
-            await _filmeService.AtualizarAsync(filme);
-            return NoContent();
+
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("excluir-filme/{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var filmeExistente = await _filmeService.ObterPorIdAsync(id);
-            if (filmeExistente == null)
+
+            try
             {
-                return NotFound($"ID: {id} não encontrado!.");
+                await _filmeService.RemoverAsync(id);
+                return NoContent();
             }
-            await _filmeService.RemoverAsync(id);
-            return NoContent();
+            catch (NotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+
         }
 
     }

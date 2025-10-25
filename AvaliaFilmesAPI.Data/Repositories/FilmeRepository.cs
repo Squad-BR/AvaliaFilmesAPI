@@ -22,11 +22,8 @@ namespace AvaliaFilmesAPI.Data.Repositories
 
         public async Task DeleteAsync(Guid id)
         {
-            var filme = await _context.Filme.FindAsync(id);
-            if (filme == null)
-            {
-                throw new Exception($"Id: {id} não encontrado!");
-            }
+            var filme = await GetByIdAsync(id);
+       
             _context.Filme.Remove(filme);
             await _context.SaveChangesAsync();
         }
@@ -39,20 +36,11 @@ namespace AvaliaFilmesAPI.Data.Repositories
         public async Task<Filme> GetByIdAsync(Guid id)
         {
             var filme = await _context.Filme.AsNoTracking().FirstOrDefaultAsync(f => f.Id == id);
-            if (filme == null)
-            {
-                throw new Exception($"Id: {id} não encontrado!");
-            }
             return filme;
         }
 
         public async Task UpdateAsync(Filme filme)
         {
-            var FilmeExiste = await _context.Filme.AsNoTracking().FirstOrDefaultAsync(f => f.Id == filme.Id);
-            if (FilmeExiste == null)
-            {
-                throw new Exception($"Id: {filme.Id} não encontrado!");
-            }
             _context.Filme.Update(filme);
             await _context.SaveChangesAsync();
         }
