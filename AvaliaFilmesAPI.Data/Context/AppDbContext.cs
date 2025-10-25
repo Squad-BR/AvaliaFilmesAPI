@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AvaliaFilmesAPI.Domain;
+using AvaliaFilmesAPI.Domain.Entities;
 
 namespace AvaliaFilmesAPI.Data.Context
 {
@@ -13,6 +14,7 @@ namespace AvaliaFilmesAPI.Data.Context
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
         public DbSet<Filme> Filme { get; set; }
+        public DbSet<ApplicationUser> ApplicationUser { get; set; }
 
-    }
+        }
 }
