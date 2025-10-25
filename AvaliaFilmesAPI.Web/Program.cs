@@ -9,6 +9,13 @@ using Microsoft.EntityFrameworkCore;
 
 
 
+using AvaliaFilmesAPI.Business.Service.Interface;
+using AvaliaFilmesAPI.Business.Service;
+using AvaliaFilmesAPI.Data.Context;
+using AvaliaFilmesAPI.Data.Repositories;
+using AvaliaFilmesAPI.Data.Repositories.InterfaceRepository;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -50,6 +57,12 @@ builder.Services.AddCors(options =>
     });
 });
 
+
+//Escopo do rpositório
+builder.Services.AddScoped<IFilmeRepository, FilmeRepository>();
+
+//Escopo do serviço
+builder.Services.AddScoped<IFilmeService, FilmeService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
