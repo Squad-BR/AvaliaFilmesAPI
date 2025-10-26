@@ -5,9 +5,11 @@ using AvaliaFilmesAPI.Data.Repositories;
 using AvaliaFilmesAPI.Data.Repositories.InterfaceRepository;
 using AvaliaFilmesAPI.Domain;
 using AvaliaFilmesAPI.Web;
+using Google.GenAI;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,11 +47,12 @@ builder.Services.AddCors(options =>
               .AllowCredentials();
     });
 });
-
+var apiKey = builder.Configuration.GetValue<string>("GeminiApi:ApiKey");
+builder.Services.AddSingleton(new Client(apiKey: apiKey));
 
 builder.Services.AddScoped<IFilmeRepository, FilmeRepository>();
 builder.Services.AddScoped<IFilmeService, FilmeService>();
-
+builder.Services.AddScoped<IDescricaoFilmeGemini, DescricaoFilmeGemini>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(opt =>
