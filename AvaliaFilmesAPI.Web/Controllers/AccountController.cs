@@ -64,5 +64,30 @@ public class AccountController : ControllerBase
         return Ok(new { Message = "Logout bem-sucedido." });
     }
 
-  
+    [HttpGet("status")]
+    public async Task<IActionResult> Status()
+    {
+        if (User?.Identity?.IsAuthenticated == true)
+        {
+            var user = await _userManager.GetUserAsync(User);
+
+            var roles = await _userManager.GetRolesAsync(user);
+            return Ok(new
+            {
+                authenticated = true,
+                id = user.Id,
+                username = user.UserName,
+                email = user.Email,
+                roles
+            });
+
+        }
+
+        return Ok(new { authenticated = false });
+    }
+
+
+
+
+
 }

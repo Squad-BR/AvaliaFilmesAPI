@@ -30,7 +30,12 @@ namespace AvaliaFilmesAPI.Business.Service
 
         public async Task<Filme> ObterPorIdAsync(Guid id)
         {
-            return await _filmeRepository.GetByIdAsync(id);
+            var filme = await _filmeRepository.GetByIdAsync(id);
+
+
+            //   var media = filme.NotaMedia;
+
+            return filme;
         }
 
         public async Task<List<Filme>> ObterTodosAsync()

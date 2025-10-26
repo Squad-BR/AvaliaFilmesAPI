@@ -1,43 +1,32 @@
-
-
-using AvaliaFilmesAPI.Data.Context;
-using AvaliaFilmesAPI.Domain;
-using AvaliaFilmesAPI.Web; 
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-
-
-
-
-using AvaliaFilmesAPI.Business.Service.Interface;
 using AvaliaFilmesAPI.Business.Service;
+using AvaliaFilmesAPI.Business.Service.Interface;
 using AvaliaFilmesAPI.Data.Context;
 using AvaliaFilmesAPI.Data.Repositories;
 using AvaliaFilmesAPI.Data.Repositories.InterfaceRepository;
+using AvaliaFilmesAPI.Domain;
+using AvaliaFilmesAPI.Web;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-
-
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
-    .AddEntityFrameworkStores<AppDbContext>();
-
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.ConfigureApplicationCookie(options =>
 {
     options.Cookie.HttpOnly = true;
     options.ExpireTimeSpan = TimeSpan.FromHours(2);
     options.Cookie.Name = "AvaliaFilmes.AuthCookie";
-    options.Cookie.SameSite = SameSiteMode.None; 
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; 
-
-    
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // exige HTTPS
     options.Events.OnRedirectToLogin = context =>
     {
         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
@@ -50,28 +39,29 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
     {
-        policy.WithOrigins("http://localhost:3000") 
+        policy.WithOrigins("http://localhost:5173") // origem do front React (Vite)
               .AllowAnyHeader()
               .AllowAnyMethod()
-              .AllowCredentials(); 
+              .AllowCredentials();
     });
 });
 
 
-//Escopo do rpositório
 builder.Services.AddScoped<IFilmeRepository, FilmeRepository>();
-
-//Escopo do serviço
 builder.Services.AddScoped<IFilmeService, FilmeService>();
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+builder.Services.AddControllers()
+    .AddJsonOptions(opt =>
+    {
+        opt.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
-
 var app = builder.Build();
+
 
 if (app.Environment.IsDevelopment())
 {
@@ -79,12 +69,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
 
+app.UseHttpsRedirection();
 
 app.UseCors("AllowReactApp");
 
-app.UseAuthentication(); 
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllers();
 
@@ -94,13 +85,12 @@ using (var scope = app.Services.CreateScope())
     var services = scope.ServiceProvider;
     try
     {
-        
         await IdentityDataSeeder.SeedDataAsync(services);
     }
     catch (Exception ex)
     {
         var logger = services.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "Ocorreu um erro durante o seeding do banco de dados.");
+        logger.LogError(ex, "Erro durante o seeding do banco de dados.");
     }
 }
 
