@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace AvaliaFilmesAPI.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialDataBase : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -177,7 +177,7 @@ namespace AvaliaFilmesAPI.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FilmeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Nota = table.Column<int>(type: "int", nullable: false),
                     Comentario = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CriadoEm = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -186,12 +186,6 @@ namespace AvaliaFilmesAPI.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Avaliacoes", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Avaliacoes_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Avaliacoes_Filmes_FilmeId",
                         column: x => x.FilmeId,
@@ -243,11 +237,6 @@ namespace AvaliaFilmesAPI.Data.Migrations
                 name: "IX_Avaliacoes_FilmeId",
                 table: "Avaliacoes",
                 column: "FilmeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Avaliacoes_UserId",
-                table: "Avaliacoes",
-                column: "UserId");
         }
 
         /// <inheritdoc />

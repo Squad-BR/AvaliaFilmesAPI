@@ -32,9 +32,6 @@ namespace AvaliaFilmesAPI.Business.Service
         {
             var filme = await _filmeRepository.GetByIdAsync(id);
 
-
-            //   var media = filme.NotaMedia;
-
             return filme;
         }
 

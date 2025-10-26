@@ -110,13 +110,11 @@ namespace AvaliaFilmesAPI.Data.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("FilmeId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Avaliacoes");
                 });
@@ -133,6 +131,9 @@ namespace AvaliaFilmesAPI.Data.Migrations
                     b.PrimitiveCollection<string>("Marcadores")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("NotaMedia")
+                        .HasColumnType("float");
 
                     b.Property<string>("Observacao")
                         .IsRequired()
@@ -282,21 +283,11 @@ namespace AvaliaFilmesAPI.Data.Migrations
 
             modelBuilder.Entity("AvaliaFilmesAPI.Domain.Entities.Avaliacao", b =>
                 {
-                    b.HasOne("AvaliaFilmesAPI.Domain.Entities.Filme", "Filme")
+                    b.HasOne("AvaliaFilmesAPI.Domain.Entities.Filme", null)
                         .WithMany("Avaliacoes")
                         .HasForeignKey("FilmeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("AvaliaFilmesAPI.Domain.ApplicationUser", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Filme");
-
-                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

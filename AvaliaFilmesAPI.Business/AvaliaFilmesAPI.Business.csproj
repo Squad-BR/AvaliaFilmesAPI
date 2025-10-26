@@ -28,4 +28,12 @@
     <ProjectReference Include="..\AvaliaFilmesAPI.Domain\AvaliaFilmesAPI.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EditorConfigFiles Remove="C:\Users\Luan Fiszer\Documents\AvaliaFilmes.Api\AvaliaFilmesAPI.Business\Service\Interface\.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="C:\Users\Luan Fiszer\Documents\AvaliaFilmes.Api\AvaliaFilmesAPI.Business\Service\Interface\.editorconfig" />
+  </ItemGroup>
+
 </Project>

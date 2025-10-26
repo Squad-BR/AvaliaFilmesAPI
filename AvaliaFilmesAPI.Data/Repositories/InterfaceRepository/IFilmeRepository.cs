@@ -11,6 +11,9 @@ namespace AvaliaFilmesAPI.Data.Repositories.InterfaceRepository
     {
         Task<List<Filme>> GetAllAsync();
         Task<Filme> GetByIdAsync(Guid id);
+        
+        Task<Filme?> GetFilmeComAvaliacoesAsync(Guid filmeId);
+
         Task AddAsync(Filme filme);
         Task UpdateAsync(Filme filme);
         Task DeleteAsync(Guid id);

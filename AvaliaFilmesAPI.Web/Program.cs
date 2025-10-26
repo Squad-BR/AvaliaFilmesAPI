@@ -5,11 +5,14 @@ using AvaliaFilmesAPI.Data.Repositories;
 using AvaliaFilmesAPI.Data.Repositories.InterfaceRepository;
 using AvaliaFilmesAPI.Domain;
 using AvaliaFilmesAPI.Web;
+using AvaliaFilmesAPI.Web.Configuration;
 using Google.GenAI;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -50,15 +53,18 @@ builder.Services.AddCors(options =>
 var apiKey = builder.Configuration.GetValue<string>("GeminiApi:ApiKey");
 builder.Services.AddSingleton(new Client(apiKey: apiKey));
 
-builder.Services.AddScoped<IFilmeRepository, FilmeRepository>();
-builder.Services.AddScoped<IFilmeService, FilmeService>();
-builder.Services.AddScoped<IDescricaoFilmeGemini, DescricaoFilmeGemini>();
+
+
+builder.Services.AddDependencyInjectionConfig();
+
 
 builder.Services.AddControllers()
     .AddJsonOptions(opt =>
     {
         opt.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+        opt.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

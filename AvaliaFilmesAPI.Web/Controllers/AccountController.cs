@@ -1,5 +1,6 @@
 ﻿
 using AvaliaFilmesAPI.Domain;
+using AvaliaFilmesAPI.Web.ViewModel.AvaliaFilmesAPI.Web.ViewModels;
 using AvaliaFilmesAPI.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -87,6 +88,61 @@ public class AccountController : ControllerBase
     }
 
 
+    [Authorize]
+    [HttpPut("update")]
+    public async Task<IActionResult> Update([FromBody] UpdateViewModel model)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+            return NotFound(new { Message = "Usuário não encontrado." });
+
+        var passwordCheck = await _userManager.CheckPasswordAsync(user, model.CurrentPassword);
+        if (!passwordCheck)
+            return BadRequest(new { Message = "Senha atual incorreta." });
+
+        bool userChanged = false;
+
+
+        if (user.UserName != model.Username)
+        {
+            user.UserName = model.Username;
+            userChanged = true;
+        }
+
+        if (user.Email != model.Email)
+        {
+            user.Email = model.Email;
+            userChanged = true;
+        }
+
+        if (userChanged)
+        {
+            var updateResult = await _userManager.UpdateAsync(user);
+            if (!updateResult.Succeeded)
+                return BadRequest(new { Message = "Erro ao atualizar dados do usuário.", Errors = updateResult.Errors });
+        }
+
+        if (!string.IsNullOrWhiteSpace(model.NewPassword))
+        {
+            var passwordResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (!passwordResult.Succeeded)
+                return BadRequest(new { Message = "Erro ao atualizar senha.", Errors = passwordResult.Errors });
+        }
+
+        return Ok(new
+        {
+            Message = "Perfil atualizado com sucesso!",
+            user = new
+            {
+                user.Id,
+                user.UserName,
+                user.Email
+            }
+        });
+    }
 
 
 

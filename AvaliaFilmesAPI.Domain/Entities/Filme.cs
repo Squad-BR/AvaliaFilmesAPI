@@ -10,16 +10,19 @@ namespace AvaliaFilmesAPI.Domain.Entities
         public DateTime DtAnoLancamento { get; set; }
         public List<string> Marcadores { get; set; } = new List<string>();
         public ICollection<Avaliacao>? Avaliacoes { get; set; } = new List<Avaliacao>();
-        [NotMapped]
-        public double NotaMedia
-        {
-            get
-            {
-                if (Avaliacoes == null || !Avaliacoes.Any())
-                    return 0;
+        public double NotaMedia { get; set; }
 
-                return Math.Round(Avaliacoes.Average(a => a.Nota), 1);
-            }
+        public void AtualizarNotaMedia()
+        {
+            //if (Avaliacoes == null || !Avaliacoes.Any())
+            //    return 0;
+
+            //return Math.Round(Avaliacoes.Average(a => a.Nota), 1);
+
+            NotaMedia = Avaliacoes != null && Avaliacoes.Any()
+            ? Math.Round(Avaliacoes.Average(a => a.Nota), 1)
+            : 0;
         }
+
     }
 }

@@ -33,6 +33,13 @@ namespace AvaliaFilmesAPI.Data.Repositories
             return await _context.Filmes.ToListAsync();
         }
 
+        public async Task<Filme?> GetFilmeComAvaliacoesAsync(Guid filmeId)
+        {
+            return await _context.Filmes
+                .Include(f => f.Avaliacoes)
+                .FirstOrDefaultAsync(f => f.Id == filmeId);
+        }
+
         public async Task<Filme> GetByIdAsync(Guid id)
         {
             var filme = await _context.Filmes

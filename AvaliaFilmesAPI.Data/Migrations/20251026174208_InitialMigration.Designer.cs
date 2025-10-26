@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AvaliaFilmesAPI.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251025234417_FilmeDataBase")]
-    partial class FilmeDataBase
+    [Migration("20251026174208_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -113,13 +113,11 @@ namespace AvaliaFilmesAPI.Data.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("FilmeId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Avaliacoes");
                 });
@@ -285,21 +283,11 @@ namespace AvaliaFilmesAPI.Data.Migrations
 
             modelBuilder.Entity("AvaliaFilmesAPI.Domain.Entities.Avaliacao", b =>
                 {
-                    b.HasOne("AvaliaFilmesAPI.Domain.Entities.Filme", "Filme")
+                    b.HasOne("AvaliaFilmesAPI.Domain.Entities.Filme", null)
                         .WithMany("Avaliacoes")
                         .HasForeignKey("FilmeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("AvaliaFilmesAPI.Domain.ApplicationUser", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Filme");
-
-                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
