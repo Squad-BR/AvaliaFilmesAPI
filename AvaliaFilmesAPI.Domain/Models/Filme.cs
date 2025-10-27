@@ -1,10 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using AvaliaFilmesAPI.Domain.Models.Entity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace AvaliaFilmesAPI.Domain.Entities
 {
-    public class Filme
+    public class Filme : Entity
     {
-        public Guid Id { get; set; }
         public string Titulo { get; set; }
         public string Observacao { get; set; }
         public DateTime DtAnoLancamento { get; set; }

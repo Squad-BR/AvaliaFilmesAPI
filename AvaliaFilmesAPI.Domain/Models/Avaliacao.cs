@@ -2,11 +2,9 @@
 
 namespace AvaliaFilmesAPI.Domain.Entities
 {
-    public class Avaliacao
+    public class Avaliacao : Entity
     {
-        [Key]
-        public Guid Id { get; set; } = Guid.NewGuid();
-
+       
         [Required]
         public Guid FilmeId { get; set; }
 

@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Service\Interface\**" />
+    <EmbeddedResource Remove="Service\Interface\**" />
+    <None Remove="Service\Interface\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Bogus" Version="35.6.4" />
     <PackageReference Include="Google.GenAI" Version="0.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.21" />
@@ -30,10 +36,6 @@
 
   <ItemGroup>
     <EditorConfigFiles Remove="C:\Users\Luan Fiszer\Documents\AvaliaFilmes.Api\AvaliaFilmesAPI.Business\Service\Interface\.editorconfig" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="C:\Users\Luan Fiszer\Documents\AvaliaFilmes.Api\AvaliaFilmesAPI.Business\Service\Interface\.editorconfig" />
   </ItemGroup>
 
 </Project>
