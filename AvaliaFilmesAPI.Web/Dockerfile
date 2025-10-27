@@ -4,7 +4,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
 # 1. Copia o arquivo .csproj (o arquivo de projeto) para restaurar as dependências
-COPY ["AvaliaFilmesAPI.csproj", "."]
+COPY ["AvaliaFilmesAPI.Web.csproj", "."]
 RUN dotnet restore "AvaliaFilmesAPI.Web.csproj"
 
 # 2. Copia o restante do seu código

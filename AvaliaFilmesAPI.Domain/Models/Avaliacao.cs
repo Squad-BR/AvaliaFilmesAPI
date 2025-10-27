@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using AvaliaFilmesAPI.Domain.Models.Entity;
+using System.ComponentModel.DataAnnotations;
 
 namespace AvaliaFilmesAPI.Domain.Entities
 {
