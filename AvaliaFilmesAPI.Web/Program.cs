@@ -53,7 +53,7 @@ builder.Services.AddCors(options =>
 var apiKey = builder.Configuration.GetValue<string>("GeminiApi:ApiKey");
 builder.Services.AddSingleton(new Client(apiKey: apiKey));
 
-
+builder.Services.AddScoped<FilmeValidation>();
 
 builder.Services.AddDependencyInjectionConfig();
 

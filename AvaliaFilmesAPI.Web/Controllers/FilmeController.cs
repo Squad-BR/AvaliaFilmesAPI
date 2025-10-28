@@ -50,10 +50,10 @@ namespace AvaliaFilmesAPI.Web.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<IActionResult> Create([FromBody] Filme filme)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+            //if (!ModelState.IsValid)
+            //{
+            //    return BadRequest(ModelState);
+            //}
             await _filmeService.AdicionarAsync(filme);
             return CreatedAtAction(nameof(GetById), new { id = filme.Id }, filme);
         }
