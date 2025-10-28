@@ -88,60 +88,58 @@ public class AccountController : ControllerBase
     }
 
 
-    [Authorize]
-    [HttpPut("update")]
-    public async Task<IActionResult> Update([FromBody] UpdateViewModel model)
+    [HttpPut("update-account")]
+    [Authorize] 
+    public async Task<IActionResult> UpdateAccount([FromBody] UpdateViewModel model)
     {
         if (!ModelState.IsValid)
+        {
             return BadRequest(ModelState);
+        }
 
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
-            return NotFound(new { Message = "Usuário não encontrado." });
+        {
+            return Unauthorized("Usuário não encontrado.");
+        }
 
-        var passwordCheck = await _userManager.CheckPasswordAsync(user, model.CurrentPassword);
-        if (!passwordCheck)
-            return BadRequest(new { Message = "Senha atual incorreta." });
+        bool profileChanged = false;
+        IdentityResult profileUpdateResult = IdentityResult.Success;
 
-        bool userChanged = false;
-
-
-        if (user.UserName != model.Username)
+        if (user.UserName != model.Username || user.Email != model.Email)
         {
             user.UserName = model.Username;
-            userChanged = true;
-        }
-
-        if (user.Email != model.Email)
-        {
             user.Email = model.Email;
-            userChanged = true;
+            profileUpdateResult = await _userManager.UpdateAsync(user);
+            profileChanged = true;
         }
 
-        if (userChanged)
+        bool passwordChanged = false;
+        IdentityResult passwordUpdateResult = IdentityResult.Success;
+
+        if (!string.IsNullOrEmpty(model.NewPassword))
         {
-            var updateResult = await _userManager.UpdateAsync(user);
-            if (!updateResult.Succeeded)
-                return BadRequest(new { Message = "Erro ao atualizar dados do usuário.", Errors = updateResult.Errors });
+            passwordChanged = true;
+            passwordUpdateResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
         }
 
-        if (!string.IsNullOrWhiteSpace(model.NewPassword))
+        if (profileUpdateResult.Succeeded && passwordUpdateResult.Succeeded)
         {
-            var passwordResult = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
-            if (!passwordResult.Succeeded)
-                return BadRequest(new { Message = "Erro ao atualizar senha.", Errors = passwordResult.Errors });
-        }
-
-        return Ok(new
-        {
-            Message = "Perfil atualizado com sucesso!",
-            user = new
+            if (!profileChanged && !passwordChanged)
             {
-                user.Id,
-                user.UserName,
-                user.Email
+                return Ok(new { Message = "Nenhuma alteração foi fornecida." });
             }
-        });
+            return Ok(new { Message = "Conta atualizada com sucesso!" });
+        }
+        else
+        {
+            var errors = profileUpdateResult.Errors.Concat(passwordUpdateResult.Errors);
+            foreach (var error in errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+            return BadRequest(ModelState);
+        }
     }
 
 
